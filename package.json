@@ -1,0 +1,44 @@
+{
+  "name": "n-pam-server",
+  "description": "Priviledge Accaunts Managment for Node.js",
+  "version": "0.0.3",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --reporter spec --recursive test/ --timeout 10000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Madnikulin50/n-pam-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Madnikulin50/n-pam-server/issues"
+  },
+  "homepage": "https://github.com/Madnikulin50/n-pam-server",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "chai": "^4.0.2",
+    "express": "^4.15.2",
+    "from2": "^2.3.0",
+    "gridfs-stream": "^1.1.1",
+    "http-mitm-proxy": "^0.5.2",
+    "md5": "^2.2.1",
+    "mocha": "^3.4.2",
+    "mongodb": "^2.2.26",
+    "mongoose": "^4.9.8",
+    "mongoose-gridfs": "^0.1.0",
+    "node-schedule": "^1.2.1",
+    "phantom": "^4.0.4",
+    "phantomjs-prebuilt": "^2.1.14"
+  },
+  "devDependencies": {
+    "eslint": "^4.8.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.2.0",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1"
+  }
+}
