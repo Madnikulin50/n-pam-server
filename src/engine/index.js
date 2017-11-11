@@ -9,7 +9,8 @@ class Engine {
     fs.readdir(testFolder, (err, files) => {
       if (err) { return onDone(err) }
       return async.eachSeries(files, (file, fileDone) => {
-        if (file[0] === '_') { return fileDone() }
+        if (file[0] === '_' ||
+        file[0] === '.') { return fileDone() }
         const protocol = require(path.join(testFolder, file))
         this.protocols[file] = protocol
         return protocol.prepare(inParams, fileDone)

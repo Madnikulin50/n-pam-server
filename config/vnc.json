@@ -1,17 +1,20 @@
 {
   "listen": {
     "ip": "127.0.0.1",
-    "port": 2222
+    "port": 4201
   },
   "user": {
-    "name": null,
-    "password": null
+    "name": "user",
+    "password": "123"
   },
-  "ssh": {
+  "vnc": {
     "host": null,
-    "port": 22,
-    "term": "xterm-color",
+    "port": 3389,
     "readyTimeout": 20000
+  },
+  "logging": {
+    "logScreenOnMouseclicks": true,
+    "logKeypress": false
   },
   "useminified": false,
   "header": {
@@ -19,7 +22,7 @@
     "background": "green"
   },
   "session": {
-    "name": "WebSSH2",
+    "name": "WebRDP",
     "secret": "mysecret"
   },
   "options": {
@@ -41,22 +44,17 @@
       "aes128-gcm@openssh.com",
       "aes256-gcm",
       "aes256-gcm@openssh.com",
-      "aes256-cbc" // for some legacy systems
+      "aes256-cbc"
     ],
     "hmac": [
       "hmac-sha2-256",
       "hmac-sha2-512",
-      "hmac-sha1" // for some legacy systems
+      "hmac-sha1"
     ],
     "compress": [
       "none",
       "zlib@openssh.com",
       "zlib"
     ]
-  },
-  "serverlog": {
-    "client": false, // proof-of-concept to log commands from client to server
-    "server": false  // not yet implemented
-  },
-  "accesslog": false // http style access logging to console.log
+  }
 }

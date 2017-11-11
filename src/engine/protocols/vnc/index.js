@@ -1,9 +1,9 @@
 const BaseSocketIO = require('../_base-socket-io')
 const path = require('path')
 
-class Rdp extends BaseSocketIO {
+class Vnc extends BaseSocketIO {
   get key () {
-    return 'rdp'
+    return 'vnc'
   }
   get socket () {
     return require('./socket')
@@ -21,7 +21,7 @@ class Rdp extends BaseSocketIO {
 
   createSessionInfo (inParams, onDone) {
     let req = inParams.req
-    req.session.rdp = {
+    req.session.vnc = {
       host: (this.validator.isIP(req.params.host + '') && req.params.host) ||
   (this.validator.isFQDN(req.params.host) && req.params.host) ||
   (/^(([a-z]|[A-Z]|[0-9]|[!^(){}\-_~])+)?\w$/.test(req.params.host) &&
@@ -46,4 +46,4 @@ class Rdp extends BaseSocketIO {
   }
 }
 
-module.exports = new Rdp()
+module.exports = new Vnc()

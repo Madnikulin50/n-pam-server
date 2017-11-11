@@ -33,6 +33,13 @@ class Options {
     return opt
   }
 
+  get users () {
+    let fn = path.join(this._config_folder, 'users.json')
+    let opt = fs.existsSync(fn) ? require(fn) : {}
+    opt = Object.assign(opt, connectionDefault)
+    return opt
+  }
+
   get store () {
     let fn = path.join(this._config_folder, 'store.json')
     let opt = fs.existsSync(fn) ? require(fn) : {}
@@ -41,6 +48,30 @@ class Options {
 
   get rdp () {
     let fn = path.join(this._config_folder, 'rdp.json')
+    let opt = fs.existsSync(fn) ? require(fn) : {}
+    return opt
+  }
+
+  get vnc () {
+    let fn = path.join(this._config_folder, 'vnc.json')
+    let opt = fs.existsSync(fn) ? require(fn) : {}
+    return opt
+  }
+
+  get ssh () {
+    let fn = path.join(this._config_folder, 'ssh.json')
+    let opt = fs.existsSync(fn) ? require(fn) : {}
+    return opt
+  }
+
+  get ipp () {
+    let fn = path.join(this._config_folder, 'ipp.json')
+    let opt = fs.existsSync(fn) ? require(fn) : {}
+    return opt
+  }
+
+  get ftp () {
+    let fn = path.join(this._config_folder, 'ftp.json')
     let opt = fs.existsSync(fn) ? require(fn) : {}
     return opt
   }

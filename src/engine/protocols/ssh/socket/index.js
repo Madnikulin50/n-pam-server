@@ -2,7 +2,7 @@
 
 // private
 var debug = require('debug')
-var debugWebSSH2 = require('debug')('WebSSH2')
+var debugWebSSH2 = require('debug')('npam')
 var SSH = require('ssh2').Client
 var termCols, termRows
 
@@ -21,7 +21,7 @@ module.exports = function socket (socket) {
     termRows = rows
   })
   conn.on('banner', function connOnBanner (data) {
-        // need to convert to cr/lf for proper formatting
+    // need to convert to cr/lf for proper formatting
     data = data.replace(/\r?\n/g, '\r\n')
     socket.emit('data', data.toString('utf-8'))
   })
