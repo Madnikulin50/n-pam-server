@@ -99,9 +99,16 @@
       // use image data to use asm.js
       var imageData = this.ctx.createImageData(output.width, output.height)
       imageData.data.set(output.data)
-      var scaledImageData = this.scaleImageData(imageData, this.scale)
-      this.ctx.putImageData(scaledImageData, (bitmap.destLeft * this.scale) ^ 0,
-        (bitmap.destTop * this.scale) ^ 0)
+      //if (this.newCanvas === undefined) {
+        this.newCanvas = $('<canvas>')
+          .attr('width', imageData.width)
+          .attr('height', imageData.height)[0]
+      //}
+      this.newCanvas.getContext('2d').putImageData(imageData, 0, 0)
+      this.ctx.scale(this.scale, this.scale)
+      this.ctx.drawImage(this.newCanvas, bitmap.destLeft,
+        bitmap.destTop, output.width, output.height)
+      this.ctx.scale(1 / this.scale, 1 / this.scale)
     },
     recalcScale () {
       this.scale = Math.min(this.canvas.width / this.realWidth, this.canvas.height / this.realHeight)
