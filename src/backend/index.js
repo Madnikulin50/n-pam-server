@@ -1,7 +1,7 @@
 var express = require('express')
 var fs = require('fs')
 var path = require('path')
-
+const bodyParser = require('body-parser')
 
 class Backend {
   constructor (inOptions) {
@@ -10,7 +10,6 @@ class Backend {
     this.options = inOptions
     this.loadPlugins(inOptions)
     this.start()
-
   }
 
   loadPlugins (inOptions) {
@@ -24,9 +23,9 @@ class Backend {
   start () {
     let backendOpts = this.options.backend
 
-    this.app.use(express.static(path.join(__dirname, '../fronend')))
+    // this.app.use(express.static(path.join(__dirname, '../fronend')))
 
-    this.app.listen(backendOpts.portnum)
+    this.app.listen(backendOpts.http.portnum)
   }
 }
 
