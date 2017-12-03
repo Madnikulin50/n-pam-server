@@ -103,7 +103,7 @@ module.exports = function (socket) {
       var screenCapDate = parseInt((newDate.getMonth() + 1), 10) + '-' + newDate.getDate() + '-' + newDate.getFullYear() + '-' + newDate.getTime()
       base64Img.img(canvas, './screenshots', screenCapDate + '-' + socket.request.session.username, function (err, filepath) { log(err) })
     } */
-    log(`On Mouse on vnc-connection:${x} ${y}`)
+    log(`On Mouse on vnc-connection: ${x} ${y} ${isPressed}`)
     if (x <= rfbClient.width &&
       y <= rfbClient.height)
       rfbClient.pointerEvent(x, y, button)
