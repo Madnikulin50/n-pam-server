@@ -38,7 +38,9 @@ class Rdp extends BaseSocketIO {
         screencapture: this.config.logging.logScreenOnMouseclicks || false
       },
       readyTimeout: (this.validator.isInt(req.query.readyTimeout + '', {min: 1, max: 300000}) &&
-    req.query.readyTimeout) || this.config[this.key].readyTimeout
+    req.query.readyTimeout) || this.config[this.key].readyTimeout,
+      shell: req.params.shell,
+      workdir: req.params.workdir
     }
     if (req.session[this.key].header.name) this.validator.escape(req.session[this.key].header.name)
     if (req.session[this.key].header.background) this.validator.escape(req.session[this.key].header.background)

@@ -82,6 +82,25 @@ class BaseSocketIO {
       })
     })
 
+    this.app.get(`/${this.key}/conn/:conn?`, (req, res, next) => {
+      let conn = this.config.connections.find(conn => conn.name === req.params.conn);
+      if (conn === undefined) {
+        res.sendStatus(500);
+        return;
+      }
+      req.session.host = conn.host
+      req.params.host = conn.host
+      req.params.shell = conn.shell
+      req.params.workdir = conn.workdir
+      res.sendFile(this.clientHtml)
+      req.protocolDispaspatcher = this
+      this.createSessionInfo({
+        req: req
+      }, (err) => {
+        if (err) { debug(err) }
+      })
+    })
+
     // Express error handling
     this.app.use(function (req, res, next) {
       res.status(404).send("Sorry can't find that!")

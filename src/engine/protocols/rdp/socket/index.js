@@ -32,7 +32,7 @@ module.exports = function (socket) {
     if (socket.request.session.rdp.header.name) socket.emit('header', socket.request.session.rdp.header.name)
 
     socket.emit('headerBackground', 'green')
-    socket.emit('header', '//HEADER//')
+    socket.emit('header', `Connecting to ${socket.request.session.rdp.host}...`)
 
     rdpClient = rdp.createClient({
       domain: socket.request.session.rdpdomain,
@@ -43,21 +43,34 @@ module.exports = function (socket) {
       screen: infos.screen,
       locale: infos.locale,
       logLevel: process.argv[2] || 'INFO'
-    }).on('connect', function () {
+    })
+    if (socket.request.session.rdp.shell) {
+      rdpClient.sec.infos.obj.alternateShell.value = new Buffer(socket.request.session.rdp.shell + '\x00', 'ucs2');
+      if (socket.request.session.rdp.workdir) {
+        rdpClient.sec.infos.obj.workingDir.value = new Buffer(socket.request.session.rdp.workdir + '\x00', 'ucs2');
+      }
+    }
+    rdpClient.on('connect', () => {
       socket.emit('rdp-connect')
+      socket.emit('headerBackground', 'green')
+      socket.emit('header', `${socket.request.session.rdp.host} is online`)
     }).on('bitmap', function (bitmap) {
       socket.emit('rdp-bitmap', bitmap)
     }).on('close', function () {
+      socket.emit('headerBackground', 'red')
+      socket.emit('header', `${socket.request.session.rdp.host} is closed`)
       socket.emit('rdp-close')
     }).on('error', function (err) {
       socket.emit('rdp-error', err)
     }).connect(socket.request.session.host, 3389)
   }).on('mouse', function (x, y, button, isPressed, canvas) {
     if (!rdpClient) return
-    if (isPressed) {
+    if (canvas !== undefined) {
       var newDate = new Date()
       var screenCapDate = parseInt((newDate.getMonth() + 1), 10) + '-' + newDate.getDate() + '-' + newDate.getFullYear() + '-' + newDate.getTime()
-      base64Img.img(canvas, './screenshots', screenCapDate + '-' + socket.request.session.username, function (err, filepath) { console.log(err) })
+      base64Img.img(canvas, './screenshots', screenCapDate + '-' + socket.request.session.username, (err, filepath) => {
+        console.log(err)
+      })
     }
     rdpClient.sendPointerEvent(x, y, button, isPressed)
   }).on('wheel', function (x, y, step, isNegative, isHorizontal) {

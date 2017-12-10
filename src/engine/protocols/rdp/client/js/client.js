@@ -46,6 +46,7 @@
     this.socket = null
     this.activeSession = false
     this.install()
+    this.bitmaps = [];
   }
 
   Client.prototype = {
@@ -64,7 +65,7 @@
         if (!self.socket) return
 
         var offset = Mstsc.elementOffset(self.canvas)
-        self.socket.emit('mouse', e.clientX - offset.left, e.clientY - offset.top, mouseButtonMap(e.button), true, self.canvas.toDataURL())
+        self.socket.emit('mouse', e.clientX - offset.left, e.clientY - offset.top, mouseButtonMap(e.button), true/*, self.canvas.toDataURL()*/)
         e.preventDefault()
         return false
       })
@@ -129,6 +130,48 @@
 
       return this
     },
+    updateScreen : function () {
+      if (this.bitmaps.length < 1) {
+        this.updateSended = false
+        return
+      }
+      console.log('[WebRDP] Num bitmaps in cache ' + this.bitmaps.length)
+      var bitmaps = this.bitmaps
+      if (bitmaps.length > 1000)
+        bitmaps.splice(0, bitmaps.length - 1000);
+      var start = performance.now();
+      for (var iBitmap = 0; iBitmap < bitmaps.length;)
+      {
+        var bitmap = bitmaps[iBitmap]
+        bitmaps.shift()
+        if (bitmap === null)
+          continue;
+      
+        
+        bitmaps.forEach(function (cur, index) {
+          if (cur === null)
+            return;
+          if (cur.destBottom === bitmap.destBottom &&
+            cur.destLeft === bitmap.destLeft &&
+            cur.destRight === bitmap.destRight &&
+            cur.destTop === bitmap.destTop) {
+              bitmap = cur
+              bitmaps[index] = null
+            }
+        })
+        this.render.update(bitmap)
+        if (bitmaps.length) {
+          var current = performance.now();
+          if (current - start > 1000) {
+            this.updateSended = false;
+            console.log('[WebRDP] Num bitmaps in cache before jump' + this.bitmaps.length)
+            return setTimeout(this.updateScreen.bind(this), 0)
+          }
+        }                              
+      }
+      this.updateSended = false;
+      console.log('[WebRDP] Num bitmaps in cache before exit' + this.bitmaps.length) 
+    },
 		/**
 		 * connect
 		 * @param ip {string} ip target for rdp
@@ -152,7 +195,23 @@
         self.activeSession = true
       }).on('rdp-bitmap', function (bitmap) {
         console.log('[WebRDP] bitmap update bpp : ' + bitmap.bitsPerPixel)
-        self.render.update(bitmap)
+        // self.render.update(bitmap)
+        self.bitmaps.forEach(function (cur, index) {
+          if (cur === null)
+            return;
+          if (cur.destBottom === bitmap.destBottom &&
+            cur.destLeft === bitmap.destLeft &&
+            cur.destRight === bitmap.destRight &&
+            cur.destTop === bitmap.destTop) {
+              self.bitmaps[index] = null
+            }
+        })
+        self.bitmaps.push(bitmap)
+        if (self.updateSended !== true) {
+          console.log('[WebRDP] start Update Screen timer ' + self.bitmaps.length)
+          self.updateSended = true
+          setTimeout(self.updateScreen.bind(self), 0)
+        }
       }).on('title', function (data) {
         document.title = data
       }).on('headerBackground', function (data) {
