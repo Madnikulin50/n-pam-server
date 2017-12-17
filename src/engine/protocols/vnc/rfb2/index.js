@@ -65,6 +65,7 @@ class RfbClient extends EventEmitter {
     stream.get(12, function (rfbver) {
       cli.serverVersion = rfbver.toString('ascii')
       stream.pack('a', [ rfb.versionstring.V3_008 ]).flush()
+      /* Apple VNC
       if (cli.serverVersion === rfb.versionstring.V3_003) {
         stream.unpack('L', function (secType) {
           var type = secType[0]
@@ -78,7 +79,7 @@ class RfbClient extends EventEmitter {
           }
         })
         return
-      }
+      } */
 
       // read security types
       stream.unpack('C', function (res) {

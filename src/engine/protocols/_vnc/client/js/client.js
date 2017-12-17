@@ -18,7 +18,7 @@
  */
 
 (function () {
-	/**
+  /**
 	 * Mouse button mapping
 	 * @param button {integer} client button number
 	 */
@@ -33,7 +33,7 @@
     }
   };
 
-	/**
+  /**
 	 * Mstsc client
 	 * Input client connection (mouse and keyboard)
 	 * bitmap processing
@@ -41,7 +41,7 @@
 	 */
   function Client (canvas) {
     this.canvas = canvas
-		// create renderer
+    // create renderer
     this.render = new Mstsc.Canvas.create(this.canvas)
     this.socket = null
     this.activeSession = false
@@ -51,7 +51,7 @@
   Client.prototype = {
     install: function () {
       var self = this
-			// bind mouse move event
+      // bind mouse move event
       this.canvas.addEventListener('mousemove', function (e) {
         if (!self.socket) return
 
@@ -109,7 +109,7 @@
         return false
       })
 
-			// bind keyboard event
+      // bind keyboard event
       window.addEventListener('keydown', function (e) {
         if (!self.socket || !self.activeSession) return
 
@@ -129,7 +129,7 @@
 
       return this
     },
-		/**
+    /**
 		 * connect
 		 * @param ip {string} ip target for rdp
 		 * @param domain {string} microsoft domain
@@ -138,16 +138,16 @@
 		 * @param next {function} asynchrone end callback
 		 */
     connect: function (next) {
-			// compute socket.io path (cozy cloud integration)
+      // compute socket.io path (cozy cloud integration)
       var parts = document.location.pathname.split('/'),
 		       base = parts.slice(0, parts.length - 1).join('/') + '/',
 		       path = base + 'socket.io'
 
-			// start connection
+      // start connection
       var self = this
-			// this.socket = io(window.location.protocol + "//" + window.location.host, { "path": path}).on('rdp-connect', function() {
+      // this.socket = io(window.location.protocol + "//" + window.location.host, { "path": path}).on('rdp-connect', function() {
       this.socket = io(window.location.protocol + '//' + window.location.host).on('rdp-connect', function () {
-				// this event can be occured twice (RDP protocol stack artefact)
+        // this event can be occured twice (RDP protocol stack artefact)
         console.log('[WebRDP] connected')
         self.activeSession = true
       }).on('rdp-bitmap', function (bitmap) {
@@ -169,7 +169,7 @@
         self.activeSession = false
       })
 
-			// emit infos event
+      // emit infos event
       this.socket.emit('infos', {
         screen: {
           width: this.canvas.width,

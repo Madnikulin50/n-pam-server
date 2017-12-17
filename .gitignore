@@ -60,3 +60,4 @@ typings/
 #ignore screenshots
 
 /screenshots
+/config

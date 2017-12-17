@@ -18,7 +18,7 @@
  */
 
 (function () {
-	/**
+  /**
 	 * Mouse button mapping
 	 * @param button {integer} client button number
 	 */
@@ -33,7 +33,7 @@
     }
   };
 
-	/**
+  /**
 	 * Mstsc client
 	 * Input client connection (mouse and keyboard)
 	 * bitmap processing
@@ -41,18 +41,18 @@
 	 */
   function Client (canvas) {
     this.canvas = canvas
-		// create renderer
+    // create renderer
     this.render = new Mstsc.Canvas.create(this.canvas)
     this.socket = null
     this.activeSession = false
     this.install()
-    this.bitmaps = [];
+    this.bitmaps = []
   }
 
   Client.prototype = {
     install: function () {
       var self = this
-			// bind mouse move event
+      // bind mouse move event
       this.canvas.addEventListener('mousemove', function (e) {
         if (!self.socket) return
 
@@ -65,7 +65,7 @@
         if (!self.socket) return
 
         var offset = Mstsc.elementOffset(self.canvas)
-        self.socket.emit('mouse', e.clientX - offset.left, e.clientY - offset.top, mouseButtonMap(e.button), true/*, self.canvas.toDataURL()*/)
+        self.socket.emit('mouse', e.clientX - offset.left, e.clientY - offset.top, mouseButtonMap(e.button), true/*, self.canvas.toDataURL() */)
         e.preventDefault()
         return false
       })
@@ -110,7 +110,7 @@
         return false
       })
 
-			// bind keyboard event
+      // bind keyboard event
       window.addEventListener('keydown', function (e) {
         if (!self.socket || !self.activeSession) return
 
@@ -130,49 +130,44 @@
 
       return this
     },
-    updateScreen : function () {
+    updateScreen: function () {
       if (this.bitmaps.length < 1) {
         this.updateSended = false
         return
       }
       console.log('[WebRDP] Num bitmaps in cache ' + this.bitmaps.length)
       var bitmaps = this.bitmaps
-      if (bitmaps.length > 1000)
-        bitmaps.splice(0, bitmaps.length - 1000);
-      var start = performance.now();
-      for (var iBitmap = 0; iBitmap < bitmaps.length;)
-      {
+      if (bitmaps.length > 1000) { bitmaps.splice(0, bitmaps.length - 1000) }
+      var start = performance.now()
+      for (var iBitmap = 0; iBitmap < bitmaps.length;) {
         var bitmap = bitmaps[iBitmap]
         bitmaps.shift()
-        if (bitmap === null)
-          continue;
-      
-        
+        if (bitmap === null) { continue }
+
         bitmaps.forEach(function (cur, index) {
-          if (cur === null)
-            return;
+          if (cur === null) { return }
           if (cur.destBottom === bitmap.destBottom &&
             cur.destLeft === bitmap.destLeft &&
             cur.destRight === bitmap.destRight &&
             cur.destTop === bitmap.destTop) {
-              bitmap = cur
-              bitmaps[index] = null
-            }
+            bitmap = cur
+            bitmaps[index] = null
+          }
         })
         this.render.update(bitmap)
         if (bitmaps.length) {
-          var current = performance.now();
+          var current = performance.now()
           if (current - start > 1000) {
-            this.updateSended = false;
+            this.updateSended = false
             console.log('[WebRDP] Num bitmaps in cache before jump' + this.bitmaps.length)
             return setTimeout(this.updateScreen.bind(this), 0)
           }
-        }                              
+        }
       }
-      this.updateSended = false;
-      console.log('[WebRDP] Num bitmaps in cache before exit' + this.bitmaps.length) 
+      this.updateSended = false
+      console.log('[WebRDP] Num bitmaps in cache before exit' + this.bitmaps.length)
     },
-		/**
+    /**
 		 * connect
 		 * @param ip {string} ip target for rdp
 		 * @param domain {string} microsoft domain
@@ -181,30 +176,29 @@
 		 * @param next {function} asynchrone end callback
 		 */
     connect: function (next) {
-			// compute socket.io path (cozy cloud integration)
+      // compute socket.io path (cozy cloud integration)
       var parts = document.location.pathname.split('/'),
 		       base = parts.slice(0, parts.length - 1).join('/') + '/',
 		       path = base + 'socket.io'
 
-			// start connection
+      // start connection
       var self = this
-			// this.socket = io(window.location.protocol + "//" + window.location.host, { "path": path}).on('rdp-connect', function() {
+      // this.socket = io(window.location.protocol + "//" + window.location.host, { "path": path}).on('rdp-connect', function() {
       this.socket = io(window.location.protocol + '//' + window.location.host).on('rdp-connect', function () {
-				// this event can be occured twice (RDP protocol stack artefact)
+        // this event can be occured twice (RDP protocol stack artefact)
         console.log('[WebRDP] connected')
         self.activeSession = true
       }).on('rdp-bitmap', function (bitmap) {
         console.log('[WebRDP] bitmap update bpp : ' + bitmap.bitsPerPixel)
         // self.render.update(bitmap)
         self.bitmaps.forEach(function (cur, index) {
-          if (cur === null)
-            return;
+          if (cur === null) { return }
           if (cur.destBottom === bitmap.destBottom &&
             cur.destLeft === bitmap.destLeft &&
             cur.destRight === bitmap.destRight &&
             cur.destTop === bitmap.destTop) {
-              self.bitmaps[index] = null
-            }
+            self.bitmaps[index] = null
+          }
         })
         self.bitmaps.push(bitmap)
         if (self.updateSended !== true) {
@@ -222,13 +216,15 @@
         next(null)
         console.log('[WebRDP] close')
         self.activeSession = false
+        window.location = '/'
       }).on('rdp-error', function (err) {
         next(err)
         console.log('[WebRDP] error : ' + err.code + '(' + err.message + ')')
         self.activeSession = false
+        window.location = '/'
       })
 
-			// emit infos event
+      // emit infos event
       this.socket.emit('infos', {
         screen: {
           width: this.canvas.width,

@@ -1,41 +1,8 @@
 {
-  "listen": {
-    "ip": "127.0.0.1",
-    "port": 4200
-  },
-  "user": {
-    "name": "user",
-    "password": "123"
-  },
-  "rdp": {
-    "host": null,
+  "connection": {
     "port": 3389,
     "readyTimeout": 20000
   },
-  "connections":[
-    {
-      "name": "default",
-      "host": "10.0.0.13",
-      "user": "user",
-      "password": "123"
-    },
-    {
-      "name": "google",
-      "host": "10.0.0.13",
-      "shell": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe www.google.com",
-      "workdir": "C:\\Program Files (x86)\\Google\\Chrome\\Application",
-      "user": "user",
-      "password": "123"
-    },
-    {
-      "name": "notepad",
-      "host": "10.0.0.13",
-      "shell": "notepad.exe",
-      "workdir": "C:\\Windows\\system32",
-      "user": "user",
-      "password": "123"
-    }
-  ],
   "logging": {
     "logScreenOnMouseclicks": true,
     "logKeypress": false
@@ -44,10 +11,6 @@
   "header": {
     "text": null,
     "background": "green"
-  },
-  "session": {
-    "name": "WebRDP",
-    "secret": "mysecret"
   },
   "options": {
     "challengeButton": true

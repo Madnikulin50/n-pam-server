@@ -1,16 +1,5 @@
 {
-  "listen": {
-    "ip": "127.0.0.1",
-    "port": 2222
-  },
-  "user": {
-    "name": "user",
-    "password": "123"
-  },
-  "ssh": {
-    "host": "192.168.100.43",
-    "user": "nikulinmaksim",
-    "password": "oe3014n",
+  "connection": {
     "port": 22,
     "term": "xterm-color",
     "readyTimeout": 20000

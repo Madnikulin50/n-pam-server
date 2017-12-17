@@ -1,5 +1,5 @@
 /*
-  d3des.c translated to JavaScript 
+  d3des.c translated to JavaScript
   Andrey Sidorov <andrey.sidorov@gmail.com>
 */
 
@@ -55,28 +55,27 @@ var pc2 = [
 
 function deskey (key, edf) {
   var i, j, l, m, n
-        var pc1m = new Buffer(56)
-        var pcr = new Buffer(56)
-	var kn = new Array(32)
+  var pc1m = new Buffer(56)
+  var pcr = new Buffer(56)
+  var kn = new Array(32)
 
-	for (j = 0; j < 56; j++) {
+  for (j = 0; j < 56; j++) {
     l = pc1[j]
-		m = l & 7
-		pc1m[j] = (key[l >>> 3] & bytebit[m]) ? 1 : 0
-		}
+    m = l & 7
+    pc1m[j] = (key[l >>> 3] & bytebit[m]) ? 1 : 0
+  }
 
   for (i = 0; i < 16; i++) {
     if (edf == DE1) m = (15 - i) << 1
-		else m = i << 1
+    else m = i << 1
 
-
-		n = m + 1
-		kn[m] = kn[n] = 0
-		for (j = 0; j < 28; j++) {
+    n = m + 1
+    kn[m] = kn[n] = 0
+    for (j = 0; j < 28; j++) {
       l = j + totrot[i]
-			if (l < 28) pcr[j] = pc1m[l]
-			else pcr[j] = pc1m[l - 28]
-			}
+      if (l < 28) pcr[j] = pc1m[l]
+      else pcr[j] = pc1m[l - 28]
+    }
     for (j = 28; j < 56; j++) {
 		    l = j + totrot[i]
 		    if (l < 56) pcr[j] = pc1m[l]
@@ -84,67 +83,62 @@ function deskey (key, edf) {
 		    }
     for (j = 0; j < 24; j++) {
       if (pcr[pc2[j]]) kn[m] |= bigbyte[j]
-			if (pcr[pc2[j + 24]]) kn[n] |= bigbyte[j]
-			}
+      if (pcr[pc2[j + 24]]) kn[n] |= bigbyte[j]
+    }
   }
   cookey(kn)
-	
 }
 
 function cookey (_raw1) {
   var raw1 = 0
-	var cook, raw0
-	var i
+  var cook, raw0
+  var i
 
-	cook = 0
-	for (i = 0; i < 16; i++, raw1++) {
+  cook = 0
+  for (i = 0; i < 16; i++, raw1++) {
     raw0 = raw1++
-		KnL[cook] = (_raw1[raw0] & 0x00fc0000) << 6
-		KnL[cook]	|= (_raw1[raw0] & 0x00000fc0) << 10
-		KnL[cook]	|= (_raw1[raw1] & 0x00fc0000) >>> 10
-		KnL[cook++] |= (_raw1[raw1] & 0x00000fc0) >>> 6
-		KnL[cook]	 = (_raw1[raw0] & 0x0003f000) << 12
-		KnL[cook]	|= (_raw1[raw0] & 0x0000003f) << 16
-		KnL[cook]	|= (_raw1[raw1] & 0x0003f000) >>> 4
-		KnL[cook++] |= (_raw1[raw1] & 0x0000003f)
-		}
+    KnL[cook] = (_raw1[raw0] & 0x00fc0000) << 6
+    KnL[cook]	|= (_raw1[raw0] & 0x00000fc0) << 10
+    KnL[cook]	|= (_raw1[raw1] & 0x00fc0000) >>> 10
+    KnL[cook++] |= (_raw1[raw1] & 0x00000fc0) >>> 6
+    KnL[cook]	 = (_raw1[raw0] & 0x0003f000) << 12
+    KnL[cook]	|= (_raw1[raw0] & 0x0000003f) << 16
+    KnL[cook]	|= (_raw1[raw1] & 0x0003f000) >>> 4
+    KnL[cook++] |= (_raw1[raw1] & 0x0000003f)
+  }
 }
 
 function des (inblock, outblock) {
   var work = new Array(2)
-	scrunch(inblock, work)
-	desfunc(work, KnL)
-	unscrun(work, outblock)
-	
+  scrunch(inblock, work)
+  desfunc(work, KnL)
+  unscrun(work, outblock)
 }
 
 function scrunch (outof, into) {
   into[0] = 0
-        into[1] = 0
+  into[1] = 0
 
-	into[0]	 = (outof[0] & 0xff) << 24
-	into[0]	|= (outof[1] & 0xff) << 16
-	into[0]	|= (outof[2] & 0xff) << 8
-	into[0] |= (outof[3] & 0xff)
-	into[1]	 = (outof[4] & 0xff) << 24
-	into[1]	|= (outof[5] & 0xff) << 16
-	into[1]	|= (outof[6] & 0xff) << 8
-	into[1]	|= (outof[7] & 0xff)
-	
-        
-	}
+  into[0]	 = (outof[0] & 0xff) << 24
+  into[0]	|= (outof[1] & 0xff) << 16
+  into[0]	|= (outof[2] & 0xff) << 8
+  into[0] |= (outof[3] & 0xff)
+  into[1]	 = (outof[4] & 0xff) << 24
+  into[1]	|= (outof[5] & 0xff) << 16
+  into[1]	|= (outof[6] & 0xff) << 8
+  into[1]	|= (outof[7] & 0xff)
+}
 
 function unscrun (outof, into) {
   into[0] = (outof[0] >>> 24) & 0xff
-	into[1] = (outof[0] >>> 16) & 0xff
-	into[2] = (outof[0] >>> 8) & 0xff
-	into[3] = outof[0]	 & 0xff
-	into[4] = (outof[1] >>> 24) & 0xff
-	into[5] = (outof[1] >>> 16) & 0xff
-	into[6] = (outof[1] >>> 8) & 0xff
-	into[7]	= outof[1]	 & 0xff
-	
-	}
+  into[1] = (outof[0] >>> 16) & 0xff
+  into[2] = (outof[0] >>> 8) & 0xff
+  into[3] = outof[0]	 & 0xff
+  into[4] = (outof[1] >>> 24) & 0xff
+  into[5] = (outof[1] >>> 16) & 0xff
+  into[6] = (outof[1] >>> 8) & 0xff
+  into[7]	= outof[1]	 & 0xff
+}
 
 var SP1 = [
   0x01010400, 0x00000000, 0x00010000, 0x01010404,
@@ -292,78 +286,77 @@ var SP8 = [
 
 function desfunc (block, keys) {
   var fval, work, right, leftt
-	var round
+  var round
 
-        var keysi = 0
+  var keysi = 0
 
-	leftt = block[0]
-	right = block[1]
+  leftt = block[0]
+  right = block[1]
 
-	work = ((leftt >>> 4) ^ right) & 0x0f0f0f0f
-        right ^= work
-	leftt ^= (work << 4)
-	work = ((leftt >>> 16) ^ right) & 0x0000ffff
-	right ^= work
-        leftt ^= (work << 16)
-	work = ((right >>> 2) ^ leftt) & 0x33333333
-	leftt ^= work
-	right ^= (work << 2)
-	work = ((right >>> 8) ^ leftt) & 0x00ff00ff
-	leftt ^= work
-	right ^= (work << 8)
-	right = ((right << 1) | ((right >>> 31) & 1)) & 0xffffffff
-	work = (leftt ^ right) & 0xaaaaaaaa
-	leftt ^= work
-	right ^= work
-	leftt = ((leftt << 1) | ((leftt >>> 31) & 1)) & 0xffffffff
+  work = ((leftt >>> 4) ^ right) & 0x0f0f0f0f
+  right ^= work
+  leftt ^= (work << 4)
+  work = ((leftt >>> 16) ^ right) & 0x0000ffff
+  right ^= work
+  leftt ^= (work << 16)
+  work = ((right >>> 2) ^ leftt) & 0x33333333
+  leftt ^= work
+  right ^= (work << 2)
+  work = ((right >>> 8) ^ leftt) & 0x00ff00ff
+  leftt ^= work
+  right ^= (work << 8)
+  right = ((right << 1) | ((right >>> 31) & 1)) & 0xffffffff
+  work = (leftt ^ right) & 0xaaaaaaaa
+  leftt ^= work
+  right ^= work
+  leftt = ((leftt << 1) | ((leftt >>> 31) & 1)) & 0xffffffff
 
-	for (round = 0; round < 8; round++) {
+  for (round = 0; round < 8; round++) {
     work = (right << 28) | (right >>> 4)
-		work ^= keys[keysi++]
-		fval = SP7[ work & 0x3f]
-		fval |= SP5[(work >>> 8) & 0x3f]
-		fval |= SP3[(work >>> 16) & 0x3f]
-		fval |= SP1[(work >>> 24) & 0x3f]
-		work = right ^ keys[keysi++]
-		fval |= SP8[ work		 & 0x3f]
-		fval |= SP6[(work >>> 8) & 0x3f]
-		fval |= SP4[(work >>> 16) & 0x3f]
-		fval |= SP2[(work >>> 24) & 0x3f]
-		leftt ^= fval
-		work = (leftt << 28) | (leftt >>> 4)
-		work ^= keys[keysi++]
-		fval = SP7[ work		 & 0x3f]
-		fval |= SP5[(work >>> 8) & 0x3f]
-		fval |= SP3[(work >>> 16) & 0x3f]
-		fval |= SP1[(work >>> 24) & 0x3f]
-		work = leftt ^ keys[keysi++]
-		fval |= SP8[ work		 & 0x3f]
-		fval |= SP6[(work >>> 8) & 0x3f]
-		fval |= SP4[(work >>> 16) & 0x3f]
-		fval |= SP2[(work >>> 24) & 0x3f]
-		right ^= fval
-		}
+    work ^= keys[keysi++]
+    fval = SP7[ work & 0x3f]
+    fval |= SP5[(work >>> 8) & 0x3f]
+    fval |= SP3[(work >>> 16) & 0x3f]
+    fval |= SP1[(work >>> 24) & 0x3f]
+    work = right ^ keys[keysi++]
+    fval |= SP8[ work		 & 0x3f]
+    fval |= SP6[(work >>> 8) & 0x3f]
+    fval |= SP4[(work >>> 16) & 0x3f]
+    fval |= SP2[(work >>> 24) & 0x3f]
+    leftt ^= fval
+    work = (leftt << 28) | (leftt >>> 4)
+    work ^= keys[keysi++]
+    fval = SP7[ work		 & 0x3f]
+    fval |= SP5[(work >>> 8) & 0x3f]
+    fval |= SP3[(work >>> 16) & 0x3f]
+    fval |= SP1[(work >>> 24) & 0x3f]
+    work = leftt ^ keys[keysi++]
+    fval |= SP8[ work		 & 0x3f]
+    fval |= SP6[(work >>> 8) & 0x3f]
+    fval |= SP4[(work >>> 16) & 0x3f]
+    fval |= SP2[(work >>> 24) & 0x3f]
+    right ^= fval
+  }
 
   right = (right << 31) | (right >>> 1)
-	work = (leftt ^ right) & 0xaaaaaaaa
-	leftt ^= work
-	right ^= work
-	leftt = (leftt << 31) | (leftt >>> 1)
-	work = ((leftt >>> 8) ^ right) & 0x00ff00ff
-	right ^= work
-	leftt ^= (work << 8)
-	work = ((leftt >>> 2) ^ right) & 0x33333333
-	right ^= work
-	leftt ^= (work << 2)
-	work = ((right >>> 16) ^ leftt) & 0x0000ffff
-	leftt ^= work
-	right ^= (work << 16)
-	work = ((right >>> 4) ^ leftt) & 0x0f0f0f0f
-	leftt ^= work
-	right ^= (work << 4)
-	block[0] = right
-	block[1] = leftt
-	
+  work = (leftt ^ right) & 0xaaaaaaaa
+  leftt ^= work
+  right ^= work
+  leftt = (leftt << 31) | (leftt >>> 1)
+  work = ((leftt >>> 8) ^ right) & 0x00ff00ff
+  right ^= work
+  leftt ^= (work << 8)
+  work = ((leftt >>> 2) ^ right) & 0x33333333
+  right ^= work
+  leftt ^= (work << 2)
+  work = ((right >>> 16) ^ leftt) & 0x0000ffff
+  leftt ^= work
+  right ^= (work << 16)
+  work = ((right >>> 4) ^ leftt) & 0x0f0f0f0f
+  leftt ^= work
+  right ^= (work << 4)
+  block[0] = right
+  block[1] = leftt
 }
 
 /* Validation sets:
@@ -423,15 +416,15 @@ var flip = [ 0, 128, 64, 192, 32, 160, 96, 224, 16, 144, 80, 208, 48, 176, 112, 
            In reality (from http://bytecrafter.blogspot.com/2010/09/des-encryption-as-used-in-vnc.html)
 
            1) DES is used in ECB mode.
-           2) The ECB Key is based upon an ASCII password. 
-              The key must be 8 bytes long. The password is either 
+           2) The ECB Key is based upon an ASCII password.
+              The key must be 8 bytes long. The password is either
               truncated to 8 bytes, or else zeros are added to the end
-              to bring it up to 8 bytes. As an additional twist, each byte 
+              to bring it up to 8 bytes. As an additional twist, each byte
               in flipped. So, if the ASCII password was "pword" [0x 70 77 6F 72 64],
               the resulting key would be [0x 0E EE F6 4E 26 00 00 00].
-           3) The VNC Authentication scheme sends a 16 byte challenge. This challenge 
+           3) The VNC Authentication scheme sends a 16 byte challenge. This challenge
               should be encrypted with the key that was just described, but DES in ECB
-              mode can only encrypt an 8 byte message. So, the challenge is split 
+              mode can only encrypt an 8 byte message. So, the challenge is split
               into two messages, encrypted separately, and then jammed back together.
 
            =========

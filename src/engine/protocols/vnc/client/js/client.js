@@ -55,7 +55,7 @@
       var scale = this.render.scale
       var res = {
         x: (e.offsetX / scale) ^ 0, // ((e.clientX - offset.left) / scale) ^ 0,
-        y: (e.offsetY / scale) ^ 0 //((e.clientY - offset.top) / scale) ^ 0
+        y: (e.offsetY / scale) ^ 0 // ((e.clientY - offset.top) / scale) ^ 0
       }
       console.log('[WebRFB] scale ' + scale + 'mouse' + e.clientX + ', ' + e.clientY + 'casnvas offset' + offset.left + ', ' + offset.top + 'result ' + res.x + ', ' + res.y)
       return res
@@ -147,7 +147,7 @@
       [13, 0xff0d, 0xff0d], // ent
       [16, 0xffe1, 0xffe1], // shift (left)
       [16, 0xffe2, 0xffe2], // shift (right) warning: jquery returns 16 for both!
-      [17, 0xffe3, 0xffe3], // ctrl (left) 
+      [17, 0xffe3, 0xffe3], // ctrl (left)
       [17, 0xffe4, 0xffe4], // ctrl (right) warning: jquery returns 17 for both!
       [18, 0xffe9, 0xffe9], // alt (left)
       [18, 0xffea, 0xffea], // alt (right) warning: jquery returns 18 for both!
@@ -203,7 +203,7 @@
       [98, 50, 50 ], // 2 (keypad)
       [99, 51, 51 ], // 3 (keypad)
       [100, 52, 52 ], // 4 (keypad)
-      [101, 53, 53 ], // 5 (keypad) 
+      [101, 53, 53 ], // 5 (keypad)
       [102, 54, 54 ], // 6 (keypad)
       [103, 55, 55 ], // 7 (keypad)
       [104, 56, 56 ], // 8 (keypad)

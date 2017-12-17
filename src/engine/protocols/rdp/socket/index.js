@@ -1,7 +1,8 @@
 var rdp = require('node-rdpjs')
-const debug = require('debug')('npam')
+const debug = require('debug')
 var base64Img = require('base64-img')
-// var rle = require('../rle.js')
+const log = debug('npam:log')
+const error = debug('npam:error')
 
 /**
  * Create proxy between rdp layer and socket io
@@ -11,10 +12,15 @@ module.exports = function (socket) {
   // if websocket connection arrives without an express session, kill it
   if (!socket.request.session) {
     socket.emit('401 UNAUTHORIZED')
-    console.log('SOCKET: No Express Session / REJECTED')
+    error('SOCKET: No Express Session / REJECTED')
     socket.disconnect(true)
     return
   }
+  if (!socket.request.session.rdp) {
+    log('SOCKET: Not RDP Session / SKIP')
+    return
+  }
+
   var rdpClient = null
 
   socket.on('infos', function (infos) {
@@ -23,31 +29,31 @@ module.exports = function (socket) {
       rdpClient.close()
     }
     if (socket.request.session.rdp === undefined) {
-      debug('No session in request')
+      error('No session in request')
       return
     }
-    debug('WebRDP Login: user=' + socket.request.session.username + ' from=' + socket.handshake.address + ' host=' + socket.request.session.rdp.host + ' port=' + socket.request.session.rdp.port + ' sessionID=' + socket.request.sessionID + '/' + socket.id + ' allowreplay=' + socket.request.session.rdp.allowreplay)
+    log('WebRDP Login: user=' + socket.request.session.username + ' from=' + socket.handshake.address + ' host=' + socket.request.session.rdp.host + ' port=' + socket.request.session.rdp.port + ' sessionID=' + socket.request.sessionID + '/' + socket.id + ' allowreplay=' + socket.request.session.rdp.allowreplay)
     socket.emit('title', 'rdp://' + socket.request.session.rdp.host)
     if (socket.request.session.rdp.header.background) socket.emit('headerBackground', socket.request.session.rdp.header.background)
     if (socket.request.session.rdp.header.name) socket.emit('header', socket.request.session.rdp.header.name)
 
     socket.emit('headerBackground', 'green')
     socket.emit('header', `Connecting to ${socket.request.session.rdp.host}...`)
-
+    let conn = socket.request.session.rdp;
     rdpClient = rdp.createClient({
-      domain: socket.request.session.rdpdomain,
-      userName: socket.request.session.username,
-      password: socket.request.session.userpassword,
+      domain: conn.domain || '',
+      userName: conn.user || '',
+      password: conn.password || '',
       enablePerf: true,
       autoLogin: true,
       screen: infos.screen,
       locale: infos.locale,
       logLevel: process.argv[2] || 'INFO'
     })
-    if (socket.request.session.rdp.shell) {
-      rdpClient.sec.infos.obj.alternateShell.value = new Buffer(socket.request.session.rdp.shell + '\x00', 'ucs2');
-      if (socket.request.session.rdp.workdir) {
-        rdpClient.sec.infos.obj.workingDir.value = new Buffer(socket.request.session.rdp.workdir + '\x00', 'ucs2');
+    if (conn.shell) {
+      rdpClient.sec.infos.obj.alternateShell.value = new Buffer(conn.shell + '\x00', 'ucs2')
+      if (conn.workdir) {
+        rdpClient.sec.infos.obj.workingDir.value = new Buffer(conn.workdir + '\x00', 'ucs2')
       }
     }
     rdpClient.on('connect', () => {
@@ -62,14 +68,14 @@ module.exports = function (socket) {
       socket.emit('rdp-close')
     }).on('error', function (err) {
       socket.emit('rdp-error', err)
-    }).connect(socket.request.session.host, 3389)
+    }).connect(conn.host, conn.port || 3389)
   }).on('mouse', function (x, y, button, isPressed, canvas) {
     if (!rdpClient) return
     if (canvas !== undefined) {
       var newDate = new Date()
       var screenCapDate = parseInt((newDate.getMonth() + 1), 10) + '-' + newDate.getDate() + '-' + newDate.getFullYear() + '-' + newDate.getTime()
       base64Img.img(canvas, './screenshots', screenCapDate + '-' + socket.request.session.username, (err, filepath) => {
-        console.log(err)
+        log(err)
       })
     }
     rdpClient.sendPointerEvent(x, y, button, isPressed)
