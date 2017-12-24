@@ -504,5 +504,5 @@
     return KeyMap[e.code || UnicodeToCode[Mstsc.browser() || 'firefox'][locale][e.keyCode]]
   }
 
-  Mstsc.scancode = scancode
+  Vnc.scancode = scancode
 })()

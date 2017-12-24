@@ -34,15 +34,16 @@
   };
 
   /**
-    * Mstsc client
+    * Vnc client
     * Input client connection (mouse and keyboard)
     * bitmap processing
     * @param canvas {canvas} rendering element
 	*/
-  function Client (canvas) {
+  function Client (canvas, container) {
     this.canvas = canvas
+    this.container = container
     // create renderer
-    this.render = new Mstsc.Canvas.create(this.canvas)
+    this.render = new Vnc.Canvas.create(this.canvas)
     this.socket = null
     this.activeSession = false
     this.install()
@@ -51,7 +52,7 @@
   Client.prototype = {
 
     eventClientToServer (e) {
-      var offset = Mstsc.elementOffset(this.canvas)
+      var offset = Vnc.elementOffset(this.canvas)
       var scale = this.render.scale
       var res = {
         x: (e.offsetX / scale) ^ 0, // ((e.clientX - offset.left) / scale) ^ 0,
@@ -278,13 +279,18 @@
 
         self.render.realHeight = data.height
         self.render.realWidth = data.width
+        self.canvas.height = data.height
+        self.canvas.width = data.width
+
 
         self.render.recalcScale()
         console.log('[WebRFB] connected')
         self.activeSession = true
       }).on('rfb-bitmap', function (bitmap) {
         console.log('[WebRFB] bitmap update  left:' + bitmap.destLeft + ' top:' + bitmap.destTop + ' right:' + bitmap.destRight + ' bottom:' + bitmap.destBottom)
-        self.render.update(bitmap)
+        setTimeout( function () {
+          self.render.update(bitmap)
+        }, 0)
       }).on('title', function (data) {
         document.title = data
       }).on('headerBackground', function (data) {
@@ -307,12 +313,12 @@
           width: this.canvas.width,
           height: this.canvas.height
         },
-        locale: Mstsc.locale()
+        locale: Vnc.locale()
       })
     }
   }
 
-  Mstsc.client = {
+  Vnc.client = {
     create: function (canvas) {
       return new Client(canvas)
     }

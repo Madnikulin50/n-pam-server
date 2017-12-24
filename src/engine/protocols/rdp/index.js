@@ -15,9 +15,6 @@ class Rdp extends BaseSocketIO {
   get staticRoot () {
     return path.join(__dirname, '/client')
   }
-  get myUtil () {
-    return require('./util')
-  }
 
   createSessionInfo (inParams, onDone) {
     let req = inParams.req

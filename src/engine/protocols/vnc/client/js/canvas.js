@@ -96,6 +96,17 @@
         output = reverse(bitmap)
       }
       this.recalcScale()
+      if (this.scale === 1) {
+        var imageData = this.ctx.createImageData(output.width, output.height)
+        for (var i=0;i< imageData.data.length; i+=4) {
+          imageData.data[i] = output.data[i+2];
+          imageData.data[i+1] = output.data[i+1];
+          imageData.data[i+2] = output.data[i];
+          imageData.data[i+3] = 255;
+        }
+        this.ctx.putImageData(imageData, bitmap.destLeft, bitmap.destTop)
+        return
+      }
       // use image data to use asm.js
       var imageData = this.ctx.createImageData(output.width, output.height)
       imageData.data.set(output.data)
@@ -105,13 +116,15 @@
         .attr('height', imageData.height)[0]
       // }
       this.newCanvas.getContext('2d').putImageData(imageData, 0, 0)
-      this.ctx.scale(this.scale, this.scale)
+      // this.ctx.scale(this.scale, this.scale)
       this.ctx.drawImage(this.newCanvas, bitmap.destLeft,
         bitmap.destTop, output.width, output.height)
-      this.ctx.scale(1 / this.scale, 1 / this.scale)
+      // this.ctx.scale(1 / this.scale, 1 / this.scale)
     },
     recalcScale () {
-      this.scale = Math.min(this.canvas.width / this.realWidth, this.canvas.height / this.realHeight)
+      // this.scale = Math.min(this.canvas.width / this.realWidth, this.canvas.height / this.realHeight)
+      this.scale = 1;
+
     },
     scaleImageData: function (imageData, scale) {
       var newCanvas = $('<canvas>')
@@ -139,7 +152,7 @@
   /**
 	 * Module export
 	 */
-  Mstsc.Canvas = {
+  Vnc.Canvas = {
     create: function (canvas) {
       return new Canvas(canvas)
     }

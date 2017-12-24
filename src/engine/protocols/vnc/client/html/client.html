@@ -19,37 +19,38 @@
     <script type="text/javascript" src="/vnc/js/jquery.js"></script>
     
     <script type="text/javascript" src="/vnc/js/socket.io.js"></script>
-    <script type="text/javascript" src="/vnc/js/mstsc.js"></script>
+    <script type="text/javascript" src="/vnc/js/Vnc.js"></script>
     <script type="text/javascript" src="/vnc/js/keyboard.js"></script>
     <script type="text/javascript" src="/vnc/js/rle.js"></script>
     <script type="text/javascript" src="/vnc/js/client.js"></script>
     <script type="text/javascript" src="/vnc/js/canvas.js"></script>
   </head>
 
-  <body onload='load("myCanvas")'>
+  <body onload='load("vnc-canvas", "vnc-container")'>
     <div id="header">Connecting...</div>
-    <div id="main" class="container">
-    </div> <!-- /container -->
-    <canvas id="myCanvas" style="display:none;cursor:none;">
+    <div id="vnc-container" class="container">
+      <canvas id="vnc-canvas" style="display:none;cursor:none;" />
+    </div>
   </body>
   <script>
     var client = null;
 
-    function load (canvas) {
-        client = Mstsc.client.create(Mstsc.$(canvas));
+    function load (canvas, container) {
+        client = Vnc.client.create(Vnc.$(canvas), Vnc.$(container));
     }
 
     function connect () {
-        Mstsc.$("main").style.display = 'none';
-        var canvas = Mstsc.$("myCanvas");
+        //Vnc.$("main").style.display = 'none';
+        var canvas = Vnc.$("vnc-canvas");
+        var container = Vnc.$("vnc-canvas");
         canvas.style.display = 'inline';
         var headerOffset = document.getElementById("header");
         var yoffset = headerOffset.scrollHeight;
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight - (yoffset + 5);
+        container.width = window.innerWidth;
+        container.height = window.innerHeight - (yoffset + 5);
         client.connect( function (err) {
-            Mstsc.$("myCanvas").style.display = 'none';
-            Mstsc.$("main").style.display = 'inline';
+            Vnc.$("vnc-canvas").style.display = 'none';
+            Vnc.$("main").style.display = 'inline';
         });
     }
 

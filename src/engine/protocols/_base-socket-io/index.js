@@ -33,8 +33,16 @@ class BaseSocketIO {
     return true
   }
 
-  get myUtil () {
-    throw new Error('Должно быть определено')
+  startSession (req, resp, next) {
+    if (this.clientHtml !== undefined) {
+      resp.sendFile(this.clientHtml)
+    }
+    req.protocolDispaspatcher = this
+    this.createSessionInfo({
+      req: req
+    }, (err) => {
+      if (err) { debug(err) }
+    })
   }
 
   prepare (inParams, onDone) {
@@ -42,7 +50,9 @@ class BaseSocketIO {
     this.config = this.options[this.key]
     this.app = inParams.app
     this.io = inParams.io
-    this.app.use(`/${this.key}`, express.static(this.staticRoot, expressOptions))
+    if (this.staticRoot !== undefined) {
+      this.app.use(`/${this.key}`, express.static(this.staticRoot, expressOptions))
+    }
 
     /* this.app.get(`/${this.key}/host/:host?`, (req, res, next) => {
       req.session.host = req.params.host
@@ -55,17 +65,8 @@ class BaseSocketIO {
       })
     }) */
 
-    this.app.get(`/${this.key}/conn/:conn?`, (req, res, next) => {
-
-      res.sendFile(this.clientHtml)
-      req.protocolDispaspatcher = this
-      this.createSessionInfo({
-        req: req
-      }, (err) => {
-        if (err) { debug(err) }
-      })
-    })
-    this.io.on('connection', this.socket)
+    this.app.get(`/${this.key}/conn/:conn?`, this.startSession.bind(this))
+    if (this.socket !== undefined) { this.io.on('connection', this.socket) }
     return onDone()
   }
 };

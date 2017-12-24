@@ -55,7 +55,7 @@ module.exports = function (socket) {
     let scale = 1.0
     rfbClient.on('connect', function () {
       log('remote screen name: ' + rfbClient.title + ' width:' + rfbClient.width + ' height: ' + rfbClient.height)
-      scale = Math.min(infos.screen.width / rfbClient.width, infos.screen.height / rfbClient.height)
+      //scale = Math.min(infos.screen.width / rfbClient.width, infos.screen.height / rfbClient.height)
 
       socket.emit('rfb-connect', {
         width: rfbClient.width * scale,
@@ -67,7 +67,7 @@ module.exports = function (socket) {
     })
     rfbClient.on('rect', function (bitmap) {
       log(`Rect on vnc-connection:x=${bitmap.x} y=${bitmap.y} width=${bitmap.width} height=${bitmap.height}`)
-      let b = new ImageJS.Bitmap({
+      /*let b = new ImageJS.Bitmap({
         width: bitmap.width,
         height: bitmap.height,
         data: bitmap.data
@@ -86,7 +86,7 @@ module.exports = function (socket) {
         data: bitmap.data,
         width: bitmap.width,
         height: bitmap.height
-      } */
+      } *//*
 
       let bmp = {
         destLeft: Math.ceil(bitmap.x * scale),
@@ -97,8 +97,25 @@ module.exports = function (socket) {
         data: scaled._data.data,
         width: scaled.width,
         height: scaled.height
+      }*/
+      var rgb = new Buffer(bitmap.width * bitmap.height *  3);
+      /* var offset = 0;
+      for (var i=0; i < bitmap.buffer.length; i += 4) {
+        rgb[offset++] = bitmap.buffer[i+2];
+        rgb[offset++] = bitmap.buffer[i+1];
+        rgb[offset++] = bitmap.buffer[i];
+      } */
+      let bmp = {
+        destLeft: bitmap.x,
+        destRight: bitmap.x + bitmap.width,
+        destTop: bitmap.y,
+        destBottom: bitmap.y + bitmap.height,
+        bitsPerPixel: bitmap.bitsPerPixel,
+        data: bitmap.data,
+        width: bitmap.width,
+        height: bitmap.height
       }
-      socket.emit('rfb-bitmap', bmp)
+      process.nextTick(() => { socket.emit('rfb-bitmap', bmp)})
     })
     rfbClient.on('resize', function (bitmap) {
       socket.emit('rfb-resize', bitmap)
