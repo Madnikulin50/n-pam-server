@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
-const connectionDefault = require('./connection-default');
+const connectionDefault = require('./connection-default')
+const serverDefault = require('./server-default')
 
 let singleton = null
 class Options {
@@ -27,9 +28,13 @@ class Options {
   }
 
   get connections () {
-    let fn = path.join(this._config_folder, 'audit.json')
+    let fn = path.join(this._config_folder, 'connections.json')
+    return require(fn)
+  }
+  get server () {
+    let fn = path.join(this._config_folder, 'server.json')
     let opt = fs.existsSync(fn) ? require(fn) : {}
-    opt = Object.assign(opt, connectionDefault)
+    opt = Object.assign(opt, serverDefault)
     return opt
   }
 
@@ -48,6 +53,12 @@ class Options {
 
   get rdp () {
     let fn = path.join(this._config_folder, 'rdp.json')
+    let opt = fs.existsSync(fn) ? require(fn) : {}
+    return opt
+  }
+
+  get menu () {
+    let fn = path.join(this._config_folder, 'menu.json')
     let opt = fs.existsSync(fn) ? require(fn) : {}
     return opt
   }

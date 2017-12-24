@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2015 Sylvain Peyrefitte
  *
- * This file is part of mstsc.js.
+ * This file is part of Vnc.js.
  *
- * mstsc.j is free software: you can redistribute it and/or modify
+ * Vnc.j is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -21,10 +21,10 @@
   /**
 	 * Use for domain declaration
 	 */
-  Mstsc = function () {
+  Vnc = function () {
   }
 
-  Mstsc.prototype = {
+  Vnc.prototype = {
     // shortcut
     $: function (id) {
       return document.getElementById(id)
@@ -76,4 +76,4 @@
   }
 })()
 
-this.Mstsc = new Mstsc()
+this.Vnc = new Vnc()

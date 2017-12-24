@@ -1,14 +1,5 @@
 {
-  "listen": {
-    "ip": "127.0.0.1",
-    "port": 4200
-  },
-  "user": {
-    "name": "user",
-    "password": "123"
-  },
-  "rdp": {
-    "host": null,
+  "connection": {
     "port": 3389,
     "readyTimeout": 20000
   },
@@ -20,10 +11,6 @@
   "header": {
     "text": null,
     "background": "green"
-  },
-  "session": {
-    "name": "WebRDP",
-    "secret": "mysecret"
   },
   "options": {
     "challengeButton": true

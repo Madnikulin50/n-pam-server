@@ -328,7 +328,7 @@ UnpackStream.prototype.pack = function (format, args) {
           for (var c = 0; c < str.length; ++c) { buf[offset++] = str.charCodeAt(c) }
         }
         break
-      case 'p': { // padded string 
+      case 'p': { // padded string
         let str = args[arg++]
         var len = xutil.padded_length(str.length)
         // TODO: buffer.write could be faster

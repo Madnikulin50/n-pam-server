@@ -1,15 +1,6 @@
 {
-  "listen": {
-    "ip": "127.0.0.1",
-    "port": 4201
-  },
-  "user": {
-    "name": "user",
-    "password": "123"
-  },
-  "vnc": {
-    "host": null,
-    "port": 3389,
+  "connection": {
+    "port": 5900,
     "readyTimeout": 20000
   },
   "logging": {
